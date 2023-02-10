@@ -2,6 +2,8 @@
 
 import copy
 
+from collections import deque
+
 
 def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
     '''
@@ -35,11 +37,18 @@ def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
 
     stack = []
     stack.append(start_word)
-    queue = []
+    queue = deque()
     queue.append(stack)
+    wordlist = open(dictionary_file, "r").readlines()
+
+    if start_word == end_word:
+        return start_word
+    if len(start_word) != len(end_word):
+        return None
+
     while len(queue) > 0:
-        queue.popleft(stack)
-        for word in dictionary_file:
+        queue.popleft()
+        for word in wordlist:
             if _adjacent(word, stack[-1]) is True:
                 if word == end_word:
                     return stack
@@ -47,7 +56,7 @@ def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
                 new_stack = copy.copy(stack)
                 new_stack.append(word)
                 queue.append(new_stack)
-                dictionary_file.remove(word)
+                wordlist.remove(word)
 
 
 def verify_word_ladder(ladder):
@@ -61,19 +70,22 @@ def verify_word_ladder(ladder):
     False
     '''
 
-    ladder = word_ladder(start_word, end_word)
-
     verify = 0
-    for i, word in enumerate(ladder):
-        if word != ladder[0]:
-            if _adjacent(word, ladder[i-1]) is True:
-                verify += 1
-            else:
-                verify -= 1
-    if verify == len(ladder)-1:
-        return True
-    else:
+    if not ladder:
         return False
+    if len(ladder) >= 1:
+        for i in range(len(ladder) - 1):
+            if i != ladder[0]:
+                if not _adjacent(ladder[i], ladder[i + 1]):
+                    return False
+                if _adjacent(ladder[i], ladder[i + 1]) is True:
+                    verify += 1
+                else:
+                    verify -= 1
+        if verify == len(ladder) - 1:
+            return True
+        else:
+            return False
 
 
 def _adjacent(word1, word2):
@@ -88,10 +100,11 @@ def _adjacent(word1, word2):
     '''
 
     diffs = 0
-    for a, b in zip(word1, word2):
-        if a != b:
-            diffs += 1
-    if diffs == 1:
-        return True
-    else:
-        return False
+    if len(word1) == len(word2):
+        for a, b in zip(word1, word2):
+            if a != b:
+                diffs += 1
+        if diffs == 1:
+            return True
+        else:
+            return False

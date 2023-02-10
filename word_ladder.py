@@ -28,8 +28,6 @@ def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
     ```
     ['stone', 'shone', 'shote', 'shots', 'soots', 'hoots',
     'hooty', 'hooey', 'honey', 'money']
-    ```
-    (We cannot use doctests here because the outputs are not unique.)
 
     Whenever it is impossible to generate a word ladder between the two words,
     the function returns `None`.
@@ -37,27 +35,30 @@ def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
 
     stack = []
     stack.append(start_word)
-    queue = deque()
+    queue = deque([])
     queue.append(stack)
-    wordlist = open(dictionary_file, "r").readlines()
+    wordlist = open(dictionary_file).read().split()
+    print(wordlist)
+    wordlist.remove(start_word)
 
     if start_word == end_word:
-        return start_word
+        return [start_word]
     if len(start_word) != len(end_word):
         return None
 
     while len(queue) > 0:
-        queue.popleft()
-        for word in wordlist:
-            if _adjacent(word, stack[-1]) is True:
+        current_stack = queue.popleft()
+        word_copy = copy.copy(wordlist)
+        for word in word_copy:
+            if _adjacent(word, current_stack[-1]):
                 if word == end_word:
-                    return stack
-                    break
-                new_stack = copy.copy(stack)
+                    current_stack.append(word)
+                    return current_stack
+                new_stack = copy.copy(current_stack)
                 new_stack.append(word)
                 queue.append(new_stack)
                 wordlist.remove(word)
-
+    return None
 
 def verify_word_ladder(ladder):
     '''
@@ -108,3 +109,5 @@ def _adjacent(word1, word2):
             return True
         else:
             return False
+
+word_ladder("money","stone")

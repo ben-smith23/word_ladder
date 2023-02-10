@@ -45,6 +45,8 @@ def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
         return [start_word]
     if len(start_word) != len(end_word):
         return None
+    if len(start_word) != 5 or len(end_word) != 5:
+        return None
 
     while len(queue) > 0:
         current_stack = queue.popleft()

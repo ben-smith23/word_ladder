@@ -33,6 +33,9 @@ def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
     the function returns `None`.
     '''
 
+    if len(start_word) != 5:
+        return None
+
     stack = []
     stack.append(start_word)
     queue = deque([])
@@ -44,8 +47,6 @@ def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
     if start_word == end_word:
         return [start_word]
     if len(start_word) != len(end_word):
-        return None
-    if len(start_word) != 5 or len(end_word) != 5:
         return None
 
     while len(queue) > 0:
